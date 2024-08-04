@@ -2,72 +2,79 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta viewport="width=device-width, initial-scale=1.0">
-    <title>Seed Finder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seed Finder - Boneless Pizza Planet</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
+    <header>
         <h1>Seed Finder</h1>
-        <div class="filter-container">
-            <div class="filter-group">
-                <label for="version-select">Select Version:</label>
-                <select id="version-select">
-                    <option value="">Select Version</option>
-                    <option value="scarlet">Scarlet</option>
-                    <option value="violet">Violet</option>
-                </select>
+    </header>
+    <main>
+        <div class="container">
+            <div class="filter-container">
+                <div class="filter-group">
+                    <label for="version-select">Select Version:</label>
+                    <select id="version-select">
+                        <option value="">Select Version</option>
+                        <option value="scarlet">Scarlet</option>
+                        <option value="violet">Violet</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="star-select">Select Star Count:</label>
+                    <select id="star-select">
+                        <option value="">Select Star Count</option>
+                        <option value="1_star">1 Star</option>
+                        <option value="2_star">2 Star</option>
+                        <option value="3_star">3 Star</option>
+                        <option value="4_star">4 Star</option>
+                        <option value="5_star">5 Star</option>
+                        <option value="6_star">6 Star</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="map-select">Select Map:</label>
+                    <select id="map-select">
+                        <option value="">Select Map</option>
+                        <option value="paldea">Paldea</option>
+                        <option value="kitakami">Kitakami</option>
+                        <option value="blueberry">Blueberry</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="pokemon-filter">Filter Pokémon:</label>
+                    <select id="pokemon-filter">
+                        <option value="">Filter Pokémon</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="reward-filter">Filter Reward:</label>
+                    <select id="reward-filter">
+                        <option value="">Filter Reward</option>
+                    </select>
+                </div>
             </div>
-            <div class="filter-group">
-                <label for="star-select">Select Star Count:</label>
-                <select id="star-select">
-                    <option value="">Select Star Count</option>
-                    <option value="1_star">1 Star</option>
-                    <option value="2_star">2 Star</option>
-                    <option value="3_star">3 Star</option>
-                    <option value="4_star">4 Star</option>
-                    <option value="5_star">5 Star</option>
-                    <option value="6_star">6 Star</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="map-select">Select Map:</label>
-                <select id="map-select">
-                    <option value="">Select Map</option>
-                    <option value="paldea">Paldea</option>
-                    <option value="kitakami">Kitakami</option>
-                    <option value="blueberry">Blueberry</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="pokemon-filter">Filter Pokémon:</label>
-                <select id="pokemon-filter">
-                    <option value="">Filter Pokémon</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="reward-filter">Filter Reward:</label>
-                <select id="reward-filter">
-                    <option value="">Filter Reward</option>
-                </select>
-            </div>
+            <table id="results-table">
+                <thead>
+                    <tr>
+                        <th>Rewards</th>
+                        <th>Pokémon</th>
+                        <th>Tera</th>
+                        <th>Seed</th>
+                        <th>Gender</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="results-body">
+                    <!-- Results will be populated here -->
+                </tbody>
+            </table>
         </div>
-        <table id="results-table">
-            <thead>
-                <tr>
-                    <th>Rewards</th>
-                    <th>Pokémon</th>
-                    <th>Tera</th>
-                    <th>Seed</th>
-                    <th>Gender</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="results-body">
-                <!-- Results will be populated here -->
-            </tbody>
-        </table>
-    </div>
+    </main>
+    <footer>
+        <p>© 2024 Boneless Pizza Planet. All rights reserved.</p>
+    </footer>
     <script src="script.js"></script>
 </body>
 </html>
