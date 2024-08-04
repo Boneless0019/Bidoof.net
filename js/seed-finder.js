@@ -59,9 +59,39 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(response => response.json())
             .then(data => {
                 seedsData = data.seeds;
+                populateDropdowns(seedsData);
                 displaySeeds();
             })
             .catch(error => console.error('Error fetching the seeds:', error));
+    }
+
+    function populateDropdowns(seeds) {
+        const pokemonSet = new Set();
+        const rewardsSet = new Set();
+
+        seeds.forEach(seed => {
+            pokemonSet.add(seed.species);
+            seed.rewards.forEach(reward => {
+                rewardsSet.add(reward.name);
+            });
+        });
+
+        pokemonFilterInput.innerHTML = '<option value="">Filter Pokémon</option>';
+        rewardFilterInput.innerHTML = '<option value="">Filter Reward</option>';
+
+        pokemonSet.forEach(pokemon => {
+            const option = document.createElement('option');
+            option.value = pokemon;
+            option.textContent = pokemon;
+            pokemonFilterInput.appendChild(option);
+        });
+
+        rewardsSet.forEach(reward => {
+            const option = document.createElement('option');
+            option.value = reward;
+            option.textContent = reward;
+            rewardFilterInput.appendChild(option);
+        });
     }
 
     function displaySeeds() {
