@@ -76,21 +76,24 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         });
 
-        pokemonFilterInput.innerHTML = '<option value="">Filter Pokémon</option>';
-        rewardFilterInput.innerHTML = '<option value="">Filter Reward</option>';
+        const pokemonSelect = document.getElementById('pokemon-filter');
+        const rewardSelect = document.getElementById('reward-filter');
+
+        pokemonSelect.innerHTML = '<option value="">Filter Pokémon</option>';
+        rewardSelect.innerHTML = '<option value="">Filter Reward</option>';
 
         pokemonSet.forEach(pokemon => {
             const option = document.createElement('option');
             option.value = pokemon;
             option.textContent = pokemon;
-            pokemonFilterInput.appendChild(option);
+            pokemonSelect.appendChild(option);
         });
 
         rewardsSet.forEach(reward => {
             const option = document.createElement('option');
             option.value = reward;
             option.textContent = reward;
-            rewardFilterInput.appendChild(option);
+            rewardSelect.appendChild(option);
         });
     }
 
