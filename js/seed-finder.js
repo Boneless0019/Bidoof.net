@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const resultsBody = document.getElementById('results-body');
     const prefixSelect = document.getElementById('prefix-select');
 
+    let seedsData = [];
+
     versionSelect.addEventListener('change', displayStars);
     starSelect.addEventListener('change', displayMaps);
     mapSelect.addEventListener('change', fetchSeeds);
@@ -56,18 +58,19 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch(filePath)
             .then(response => response.json())
             .then(data => {
-                displaySeeds(data.seeds);
+                seedsData = data.seeds;
+                displaySeeds();
             })
             .catch(error => console.error('Error fetching the seeds:', error));
     }
 
-    function displaySeeds(seeds = []) {
+    function displaySeeds() {
         resultsBody.innerHTML = '';
 
         const pokemonFilter = pokemonFilterInput.value.toLowerCase();
         const rewardFilter = rewardFilterInput.value.toLowerCase();
 
-        const filteredSeeds = seeds.filter(seed => {
+        const filteredSeeds = seedsData.filter(seed => {
             const matchesPokemon = !pokemonFilter || seed.species.toLowerCase().includes(pokemonFilter);
             const matchesReward = !rewardFilter || seed.rewards.some(reward => reward.name.toLowerCase().includes(rewardFilter));
             return matchesPokemon && matchesReward;
