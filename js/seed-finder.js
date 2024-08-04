@@ -9,13 +9,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     versionSelect.addEventListener('change', displayStars);
     starSelect.addEventListener('change', displayMaps);
-    mapSelect.addEventListener('change', displayPokemon);
-    pokemonSelect.addEventListener('change', displayRewards);
+    mapSelect.addEventListener('change', displayPokemonAndRewards);
+    pokemonSelect.addEventListener('change', displaySeeds);
     rewardSelect.addEventListener('change', displaySeeds);
-
-    function navigateToHomePage() {
-        window.location.href = 'index.html';
-    }
 
     function displayStars() {
         starSelect.innerHTML = '<option value="">Select Star Count</option>';
@@ -48,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    function displayPokemon() {
+    function displayPokemonAndRewards() {
         pokemonSelect.innerHTML = '<option value="">Select Pokémon</option>';
         rewardSelect.innerHTML = '<option value="">Select Reward</option>';
         resultsBody.innerHTML = '';
@@ -63,31 +59,15 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(response => response.json())
             .then(data => {
                 const species = [...new Set(data.seeds.map(seed => seed.species))];
+                const rewards = [...new Set(data.seeds.flatMap(seed => seed.rewards.map(reward => reward.name)))];
+                
                 species.forEach(pokemon => {
                     const option = document.createElement('option');
                     option.value = pokemon;
                     option.textContent = pokemon;
                     pokemonSelect.appendChild(option);
                 });
-            })
-            .catch(error => console.error('Error fetching the seeds:', error));
-    }
 
-    function displayRewards() {
-        rewardSelect.innerHTML = '<option value="">Select Reward</option>';
-        resultsBody.innerHTML = '';
-
-        const version = versionSelect.value;
-        const star = starSelect.value;
-        const map = mapSelect.value;
-        const species = pokemonSelect.value;
-
-        if (!version || !star || !map || !species) return;
-
-        fetch(`data/${star}/${version}/${map}.json`)
-            .then(response => response.json())
-            .then(data => {
-                const rewards = [...new Set(data.seeds.flatMap(seed => seed.rewards.map(reward => reward.name)))];
                 rewards.forEach(reward => {
                     const option = document.createElement('option');
                     option.value = reward;
@@ -107,12 +87,21 @@ document.addEventListener("DOMContentLoaded", function() {
         const species = pokemonSelect.value;
         const reward = rewardSelect.value;
 
-        if (!version || !star || !map || !species || !reward) return;
+        if (!version || !star || !map) return;
 
         fetch(`data/${star}/${version}/${map}.json`)
             .then(response => response.json())
             .then(data => {
-                const filteredSeeds = data.seeds.filter(seed => seed.species === species && seed.rewards.some(r => r.name === reward));
+                let filteredSeeds = data.seeds;
+
+                if (species) {
+                    filteredSeeds = filteredSeeds.filter(seed => seed.species === species);
+                }
+
+                if (reward) {
+                    filteredSeeds = filteredSeeds.filter(seed => seed.rewards.some(r => r.name === reward));
+                }
+
                 showSeeds(filteredSeeds, data.meta.stars);
             })
             .catch(error => console.error('Error fetching the seeds:', error));
@@ -161,5 +150,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    window.navigateToHomePage = navigateToHomePage; // Ensure the function is globally accessible
+    window.navigateToHomePage = function() {
+        window.location.href = 'index.html';
+    }
 });
