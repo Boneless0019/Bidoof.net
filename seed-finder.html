@@ -2,14 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta viewport="width=device-width, initial-scale=1.0">
     <title>Seed Finder</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body class="seed-finder">
+<body>
     <div class="container">
         <h1>Seed Finder</h1>
-        <button class="back-button" onclick="navigateToHomePage()">Back to Home</button>
         <div class="filter-container">
             <div class="filter-group">
                 <label for="version-select">Select Version:</label>
@@ -52,36 +51,23 @@
                     <option value="">Filter Reward</option>
                 </select>
             </div>
-            <div class="prefix-container">
-                <label for="prefix-select">Select Bot Prefix:</label>
-                <select id="prefix-select">
-                    <option value="?">?</option>
-                    <option value="!">!</option>
-                    <option value=">">></option>
-                    <option value="@">@</option>
-                    <option value="#">#</option>
-                    <option value="$">$</option>
-                </select>
-            </div>
         </div>
-        <div id="seed-container">
-            <table id="results-table">
-                <thead>
-                    <tr>
-                        <th>Rewards</th>
-                        <th>Pokémon</th>
-                        <th>Tera</th>
-                        <th>Seed</th>
-                        <th>Gender</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="results-body">
-                    <!-- Results will be populated here -->
-                </tbody>
-            </table>
-        </div>
+        <table id="results-table">
+            <thead>
+                <tr>
+                    <th>Rewards</th>
+                    <th>Pokémon</th>
+                    <th>Tera</th>
+                    <th>Seed</th>
+                    <th>Gender</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="results-body">
+                <!-- Results will be populated here -->
+            </tbody>
+        </table>
     </div>
-    <script src="js/seed-finder.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

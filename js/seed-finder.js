@@ -2,160 +2,101 @@ document.addEventListener("DOMContentLoaded", function() {
     const versionSelect = document.getElementById('version-select');
     const starSelect = document.getElementById('star-select');
     const mapSelect = document.getElementById('map-select');
-    const pokemonFilterInput = document.getElementById('pokemon-filter');
-    const rewardFilterInput = document.getElementById('reward-filter');
+    const pokemonSelect = document.getElementById('pokemon-filter');
+    const rewardSelect = document.getElementById('reward-filter');
     const resultsBody = document.getElementById('results-body');
     const prefixSelect = document.getElementById('prefix-select');
 
+    versionSelect.addEventListener('change', refreshData);
+    starSelect.addEventListener('change', refreshData);
+    mapSelect.addEventListener('change', fetchSeeds);
+    pokemonSelect.addEventListener('change', displaySeeds);
+    rewardSelect.addEventListener('change', displaySeeds);
+
     let seedsData = [];
 
-    versionSelect.addEventListener('change', displayStars);
-    starSelect.addEventListener('change', displayMaps);
-    mapSelect.addEventListener('change', fetchSeeds);
-    pokemonFilterInput.addEventListener('input', displaySeeds);
-    rewardFilterInput.addEventListener('input', displaySeeds);
-
-    function displayStars() {
-        starSelect.innerHTML = '<option value="">Select Star Count</option>';
-        mapSelect.innerHTML = '<option value="">Select Map</option>';
-        pokemonFilterInput.value = '';
-        rewardFilterInput.value = '';
-        resultsBody.innerHTML = '';
-
-        const stars = ['1_star', '2_star', '3_star', '4_star', '5_star', '6_star'];
-        stars.forEach(star => {
-            const option = document.createElement('option');
-            option.value = star;
-            option.textContent = star.replace('_', ' ');
-            starSelect.appendChild(option);
-        });
-    }
-
-    function displayMaps() {
-        mapSelect.innerHTML = '<option value="">Select Map</option>';
-        pokemonFilterInput.value = '';
-        rewardFilterInput.value = '';
-        resultsBody.innerHTML = '';
-
-        const maps = ['paldea', 'kitakami', 'blueberry'];
-        maps.forEach(map => {
-            const option = document.createElement('option');
-            option.value = map;
-            option.textContent = map.charAt(0).toUpperCase() + map.slice(1);
-            mapSelect.appendChild(option);
-        });
+    function refreshData() {
+        if(versionSelect.value && starSelect.value && mapSelect.value) {
+            fetchSeeds();
+        }
     }
 
     function fetchSeeds() {
         const version = versionSelect.value;
         const star = starSelect.value;
         const map = mapSelect.value;
-
-        if (!version || !star || !map) return;
-
         const filePath = `data/${star}/${version}/${map}.json`;
 
         fetch(filePath)
             .then(response => response.json())
             .then(data => {
                 seedsData = data.seeds;
-                populateDropdowns(seedsData);
+                populateDropdowns();
                 displaySeeds();
             })
-            .catch(error => console.error('Error fetching the seeds:', error));
+            .catch(error => {
+                console.error('Error fetching the seeds:', error);
+                seedsData = [];
+                populateDropdowns();
+                displaySeeds();
+            });
     }
 
-    function populateDropdowns(seeds) {
+    function populateDropdowns() {
         const pokemonSet = new Set();
         const rewardsSet = new Set();
 
-        seeds.forEach(seed => {
+        seedsData.forEach(seed => {
             pokemonSet.add(seed.species);
-            seed.rewards.forEach(reward => {
-                rewardsSet.add(reward.name);
-            });
+            seed.rewards.forEach(reward => rewardsSet.add(reward.name));
         });
 
-        const pokemonSelect = document.getElementById('pokemon-filter');
-        const rewardSelect = document.getElementById('reward-filter');
-
-        pokemonSelect.innerHTML = '<option value="">Filter Pokémon</option>';
-        rewardSelect.innerHTML = '<option value="">Filter Reward</option>';
+        pokemonSelect.innerHTML = '';
+        rewardSelect.innerHTML = '';
 
         pokemonSet.forEach(pokemon => {
-            const option = document.createElement('option');
-            option.value = pokemon;
-            option.textContent = pokemon;
-            pokemonSelect.appendChild(option);
+            pokemonSelect.add(new Option(pokemon, pokemon));
+        });
+        rewardsSet.forEach(reward => {
+            rewardSelect.add(new Option(reward, reward));
         });
 
-        rewardsSet.forEach(reward => {
-            const option = document.createElement('option');
-            option.value = reward;
-            option.textContent = reward;
-            rewardSelect.appendChild(option);
-        });
+        if (!pokemonSet.size) pokemonSelect.add(new Option('No Pokémon found', ''));
+        if (!rewardsSet.size) rewardSelect.add(new Option('No rewards found', ''));
     }
 
     function displaySeeds() {
         resultsBody.innerHTML = '';
-
-        const pokemonFilter = pokemonFilterInput.value.toLowerCase();
-        const rewardFilter = rewardFilterInput.value.toLowerCase();
+        const pokemonFilter = pokemonSelect.value;
+        const rewardFilter = rewardSelect.value;
 
         const filteredSeeds = seedsData.filter(seed => {
-            const matchesPokemon = !pokemonFilter || seed.species.toLowerCase().includes(pokemonFilter);
-            const matchesReward = !rewardFilter || seed.rewards.some(reward => reward.name.toLowerCase().includes(rewardFilter));
-            return matchesPokemon && matchesReward;
+            const pokemonMatches = !pokemonFilter || seed.species === pokemonFilter;
+            const rewardMatches = !rewardFilter || seed.rewards.some(reward => reward.name === rewardFilter);
+            return pokemonMatches && rewardMatches;
         });
 
-        showSeeds(filteredSeeds);
-    }
-
-    function showSeeds(seeds) {
-        seeds.forEach(seed => {
+        filteredSeeds.forEach(seed => {
             const row = document.createElement('tr');
-
-            const rewardsCell = document.createElement('td');
-            rewardsCell.innerHTML = seed.rewards.map(reward => `${reward.count}x ${reward.name}`).join('<br>');
-            row.appendChild(rewardsCell);
-
-            const pokemonCell = document.createElement('td');
-            pokemonCell.textContent = seed.species;
-            row.appendChild(pokemonCell);
-
-            const teraCell = document.createElement('td');
-            teraCell.textContent = seed.tera_type;
-            row.appendChild(teraCell);
-
-            const seedCell = document.createElement('td');
-            seedCell.textContent = seed.seed;
-            row.appendChild(seedCell);
-
-            const genderCell = document.createElement('td');
-            genderCell.textContent = seed.gender;
-            row.appendChild(genderCell);
-
-            const actionsCell = document.createElement('td');
-            const copyButton = document.createElement('button');
-            copyButton.textContent = 'Copy';
-            copyButton.onclick = () => {
-                const prefix = prefixSelect.value;
-                const raidCommand = `${prefix}ra ${seed.seed} ${seed.meta.stars} <storyprogress>`;
-                navigator.clipboard.writeText(raidCommand).then(() => {
-                    alert(`Copied to clipboard: ${raidCommand}`);
-                }, (err) => {
-                    console.error('Failed to copy text: ', err);
-                });
-            };
-            actionsCell.appendChild(copyButton);
-            row.appendChild(actionsCell);
-
+            const rewardsList = seed.rewards.map(r => `${r.count}x ${r.name}`).join(', ');
+            
+            row.innerHTML = `
+                <td>${rewardsList}</td>
+                <td>${seed.species}</td>
+                <td>${seed.tera_type}</td>
+                <td>${seed.seed}</td>
+                <td>${seed.gender}</td>
+                <td><button onclick="copyToClipboard('${seed.seed}')">Copy</button></td>
+            `;
             resultsBody.appendChild(row);
         });
     }
 
-    window.navigateToHomePage = function() {
-        window.location.href = 'index.html';
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Copied to clipboard: ' + text);
+        }).catch(err => {
+            console.error('Error in copying text: ', err);
+        });
     }
 });
