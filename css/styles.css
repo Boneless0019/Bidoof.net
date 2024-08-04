@@ -70,13 +70,6 @@ button:hover {
     margin: 10px;
 }
 
-.buttons-container {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 20px;
-}
-
 .prefix-container {
     margin-top: 20px;
     text-align: center;

@@ -55,7 +55,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if (!version || !star || !map) return;
 
-        fetch(`data/${star}/${version}/${map}.json`)
+        const filePath = `data/${star}/${version}/${map}.json`;
+
+        fetch(filePath)
             .then(response => response.json())
             .then(data => {
                 const species = [...new Set(data.seeds.map(seed => seed.species))];
@@ -89,7 +91,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if (!version || !star || !map) return;
 
-        fetch(`data/${star}/${version}/${map}.json`)
+        const filePath = `data/${star}/${version}/${map}.json`;
+
+        fetch(filePath)
             .then(response => response.json())
             .then(data => {
                 let filteredSeeds = data.seeds;
