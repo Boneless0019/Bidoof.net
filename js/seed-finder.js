@@ -1,110 +1,165 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const folderContainer = document.getElementById('folder-container');
-    const subfolderContainer = document.getElementById('subfolder-container');
-    const fileContainer = document.getElementById('file-container');
-    const seedContainer = document.getElementById('seed-container');
+    const versionSelect = document.getElementById('version-select');
+    const starSelect = document.getElementById('star-select');
+    const mapSelect = document.getElementById('map-select');
+    const pokemonSelect = document.getElementById('pokemon-select');
+    const rewardSelect = document.getElementById('reward-select');
+    const resultsBody = document.getElementById('results-body');
+    const prefixSelect = document.getElementById('prefix-select');
 
-    const stars = ['1_star', '2_star', '3_star', '4_star', '5_star', '6_star'];
-    const versions = ['scarlet', 'violet'];
-    const files = ['paldea.json', 'kitakami.json', 'blueberry.json'];
+    versionSelect.addEventListener('change', displayStars);
+    starSelect.addEventListener('change', displayMaps);
+    mapSelect.addEventListener('change', displayPokemon);
+    pokemonSelect.addEventListener('change', displayRewards);
+    rewardSelect.addEventListener('change', displaySeeds);
 
-    stars.forEach(star => {
-        const starButton = document.createElement('button');
-        starButton.textContent = star;
-        starButton.onclick = () => {
-            displayVersions(star);
-        };
-        folderContainer.appendChild(starButton);
-    });
+    function navigateToHomePage() {
+        window.location.href = 'index.html';
+    }
 
-    function displayVersions(star) {
-        subfolderContainer.innerHTML = '';
-        fileContainer.innerHTML = '';
-        seedContainer.innerHTML = '';
+    function displayStars() {
+        starSelect.innerHTML = '<option value="">Select Star Count</option>';
+        mapSelect.innerHTML = '<option value="">Select Map</option>';
+        pokemonSelect.innerHTML = '<option value="">Select Pokémon</option>';
+        rewardSelect.innerHTML = '<option value="">Select Reward</option>';
+        resultsBody.innerHTML = '';
 
-        versions.forEach(version => {
-            const versionButton = document.createElement('button');
-            versionButton.textContent = version;
-            versionButton.onclick = () => {
-                displayFiles(star, version);
-            };
-            subfolderContainer.appendChild(versionButton);
+        const stars = ['1_star', '2_star', '3_star', '4_star', '5_star', '6_star'];
+        stars.forEach(star => {
+            const option = document.createElement('option');
+            option.value = star;
+            option.textContent = star.replace('_', ' ');
+            starSelect.appendChild(option);
         });
     }
 
-    function displayFiles(star, version) {
-        fileContainer.innerHTML = '';
-        seedContainer.innerHTML = '';
+    function displayMaps() {
+        mapSelect.innerHTML = '<option value="">Select Map</option>';
+        pokemonSelect.innerHTML = '<option value="">Select Pokémon</option>';
+        rewardSelect.innerHTML = '<option value="">Select Reward</option>';
+        resultsBody.innerHTML = '';
 
-        files.forEach(file => {
-            const fileButton = document.createElement('button');
-            fileButton.textContent = file;
-            fileButton.onclick = () => {
-                fetchSeeds(`data/${star}/${version}/${file}`);
-            };
-            fileContainer.appendChild(fileButton);
+        const maps = ['paldea', 'kitakami', 'blueberry'];
+        maps.forEach(map => {
+            const option = document.createElement('option');
+            option.value = map;
+            option.textContent = map.charAt(0).toUpperCase() + map.slice(1);
+            mapSelect.appendChild(option);
         });
     }
 
-    function fetchSeeds(filePath) {
-        fetch(filePath)
+    function displayPokemon() {
+        pokemonSelect.innerHTML = '<option value="">Select Pokémon</option>';
+        rewardSelect.innerHTML = '<option value="">Select Reward</option>';
+        resultsBody.innerHTML = '';
+
+        const version = versionSelect.value;
+        const star = starSelect.value;
+        const map = mapSelect.value;
+
+        if (!version || !star || !map) return;
+
+        fetch(`data/${star}/${version}/${map}.json`)
             .then(response => response.json())
-            .then(data => displaySeeds(data.seeds))
+            .then(data => {
+                const species = [...new Set(data.seeds.map(seed => seed.species))];
+                species.forEach(pokemon => {
+                    const option = document.createElement('option');
+                    option.value = pokemon;
+                    option.textContent = pokemon;
+                    pokemonSelect.appendChild(option);
+                });
+            })
             .catch(error => console.error('Error fetching the seeds:', error));
     }
 
-    function displaySeeds(seeds) {
-        seedContainer.innerHTML = '';
+    function displayRewards() {
+        rewardSelect.innerHTML = '<option value="">Select Reward</option>';
+        resultsBody.innerHTML = '';
+
+        const version = versionSelect.value;
+        const star = starSelect.value;
+        const map = mapSelect.value;
+        const species = pokemonSelect.value;
+
+        if (!version || !star || !map || !species) return;
+
+        fetch(`data/${star}/${version}/${map}.json`)
+            .then(response => response.json())
+            .then(data => {
+                const rewards = [...new Set(data.seeds.flatMap(seed => seed.rewards.map(reward => reward.name)))];
+                rewards.forEach(reward => {
+                    const option = document.createElement('option');
+                    option.value = reward;
+                    option.textContent = reward;
+                    rewardSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching the seeds:', error));
+    }
+
+    function displaySeeds() {
+        resultsBody.innerHTML = '';
+
+        const version = versionSelect.value;
+        const star = starSelect.value;
+        const map = mapSelect.value;
+        const species = pokemonSelect.value;
+        const reward = rewardSelect.value;
+
+        if (!version || !star || !map || !species || !reward) return;
+
+        fetch(`data/${star}/${version}/${map}.json`)
+            .then(response => response.json())
+            .then(data => {
+                const filteredSeeds = data.seeds.filter(seed => seed.species === species && seed.rewards.some(r => r.name === reward));
+                showSeeds(filteredSeeds, data.meta.stars);
+            })
+            .catch(error => console.error('Error fetching the seeds:', error));
+    }
+
+    function showSeeds(seeds, stars) {
         seeds.forEach(seed => {
-            const seedCard = document.createElement('div');
-            seedCard.className = 'seed-card';
+            const row = document.createElement('tr');
 
-            const seedName = document.createElement('h2');
-            seedName.textContent = seed.species;
-            seedCard.appendChild(seedName);
+            const rewardsCell = document.createElement('td');
+            rewardsCell.innerHTML = seed.rewards.map(reward => `${reward.count}x ${reward.name}`).join('<br>');
+            row.appendChild(rewardsCell);
 
-            const ability = document.createElement('p');
-            ability.textContent = `Ability: ${seed.ability}`;
-            seedCard.appendChild(ability);
+            const pokemonCell = document.createElement('td');
+            pokemonCell.textContent = seed.species;
+            row.appendChild(pokemonCell);
 
-            const nature = document.createElement('p');
-            nature.textContent = `Nature: ${seed.nature}`;
-            seedCard.appendChild(nature);
+            const teraCell = document.createElement('td');
+            teraCell.textContent = seed.tera_type;
+            row.appendChild(teraCell);
 
-            const teraType = document.createElement('p');
-            teraType.textContent = `Tera Type: ${seed.tera_type}`;
-            seedCard.appendChild(teraType);
+            const seedCell = document.createElement('td');
+            seedCell.textContent = seed.seed;
+            row.appendChild(seedCell);
 
-            const shiny = document.createElement('p');
-            shiny.textContent = `Shiny: ${seed.shiny}`;
-            seedCard.appendChild(shiny);
+            const genderCell = document.createElement('td');
+            genderCell.textContent = seed.gender;
+            row.appendChild(genderCell);
 
-            const stats = document.createElement('div');
-            stats.className = 'stats';
-            stats.innerHTML = `
-                <p>HP: ${seed.hp}</p>
-                <p>ATK: ${seed.atk}</p>
-                <p>DEF: ${seed.def}</p>
-                <p>SPA: ${seed.spa}</p>
-                <p>SPD: ${seed.spd}</p>
-                <p>SPE: ${seed.spe}</p>
-            `;
-            seedCard.appendChild(stats);
+            const actionsCell = document.createElement('td');
+            const copyButton = document.createElement('button');
+            copyButton.textContent = 'Copy';
+            copyButton.onclick = () => {
+                const prefix = prefixSelect.value;
+                const raidCommand = `${prefix}ra ${seed.seed} ${stars} <storyprogress>`;
+                navigator.clipboard.writeText(raidCommand).then(() => {
+                    alert(`Copied to clipboard: ${raidCommand}`);
+                }, (err) => {
+                    console.error('Failed to copy text: ', err);
+                });
+            };
+            actionsCell.appendChild(copyButton);
+            row.appendChild(actionsCell);
 
-            const rewards = document.createElement('div');
-            rewards.className = 'rewards';
-            const rewardsTitle = document.createElement('h3');
-            rewardsTitle.textContent = 'Rewards:';
-            rewards.appendChild(rewardsTitle);
-
-            seed.rewards.forEach(reward => {
-                const rewardItem = document.createElement('p');
-                rewardItem.textContent = `${reward.count}x ${reward.name}`;
-                rewards.appendChild(rewardItem);
-            });
-
-            seedCard.appendChild(rewards);
-            seedContainer.appendChild(seedCard);
+            resultsBody.appendChild(row);
         });
     }
+
+    window.navigateToHomePage = navigateToHomePage; // Ensure the function is globally accessible
 });

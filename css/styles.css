@@ -1,19 +1,38 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    background-color: #ffffff;
     margin: 0;
     padding: 0;
+    color: #333;
+}
+
+.homepage {
+    background: url('images/pizza-planet-background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+    text-align: center;
+}
+
+.seed-finder {
+    background-color: #ffffff;
+    color: #333;
 }
 
 .container {
     width: 80%;
     margin: auto;
     overflow: hidden;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    border: 2px solid #ff0000;
 }
 
 h1 {
-    text-align: center;
+    font-size: 3em;
     margin-top: 20px;
+    text-align: center;
+    color: #ff0000;
 }
 
 button {
@@ -21,36 +40,85 @@ button {
     margin: 20px auto;
     padding: 10px 20px;
     font-size: 16px;
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-#folder-container, #subfolder-container, #file-container, #seed-container {
+button:hover {
+    background-color: #cc0000;
+}
+
+.back-button {
+    background-color: #4caf50;
+}
+
+.back-button:hover {
+    background-color: #45a049;
+}
+
+.filter-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.filter-group {
+    margin: 10px;
+}
+
+.buttons-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
     margin-top: 20px;
 }
 
-.seed-card {
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    margin: 10px;
-    padding: 20px;
-    width: 200px;
+.prefix-container {
+    margin-top: 20px;
     text-align: center;
-    display: inline-block;
 }
 
-.seed-card h2 {
-    margin: 0 0 10px 0;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
 }
 
-.seed-card p {
-    margin: 5px 0;
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
 }
 
-.stats, .rewards {
-    margin-top: 10px;
+th {
+    background-color: #ff0000;
+    color: white;
+    font-weight: bold;
 }
 
-.rewards h3 {
-    margin: 10px 0 5px;
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+td button {
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #ff6347;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+td button:hover {
+    background-color: #ff4500;
 }

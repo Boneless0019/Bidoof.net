@@ -6,13 +6,78 @@
     <title>Seed Finder</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
+<body class="seed-finder">
     <div class="container">
         <h1>Seed Finder</h1>
-        <div id="folder-container"></div>
-        <div id="subfolder-container"></div>
-        <div id="file-container"></div>
-        <div id="seed-container"></div>
+        <button class="back-button" onclick="navigateToHomePage()">Back to Home</button>
+        <div class="filter-container">
+            <div class="filter-group">
+                <label for="version-select">Select Version:</label>
+                <select id="version-select">
+                    <option value="">Select Version</option>
+                    <option value="scarlet">Scarlet</option>
+                    <option value="violet">Violet</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="star-select">Select Star Count:</label>
+                <select id="star-select">
+                    <option value="">Select Star Count</option>
+                    <option value="1_star">1 Star</option>
+                    <option value="2_star">2 Star</option>
+                    <option value="3_star">3 Star</option>
+                    <option value="4_star">4 Star</option>
+                    <option value="5_star">5 Star</option>
+                    <option value="6_star">6 Star</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="map-select">Select Map:</label>
+                <select id="map-select">
+                    <option value="">Select Map</option>
+                    <option value="paldea">Paldea</option>
+                    <option value="kitakami">Kitakami</option>
+                    <option value="blueberry">Blueberry</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="pokemon-select">Select Pokémon:</label>
+                <select id="pokemon-select">
+                    <option value="">Select Pokémon</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="reward-select">Select Reward:</label>
+                <select id="reward-select">
+                    <option value="">Select Reward</option>
+                </select>
+            </div>
+            <div class="prefix-container">
+                <label for="prefix-select">Select Bot Prefix:</label>
+                <select id="prefix-select">
+                    <option value="?">?</option>
+                    <option value="!">!</option>
+                    <option value=">">></option>
+                </select>
+            </div>
+        </div>
+        <div id="seed-container">
+            <table id="results-table">
+                <thead>
+                    <tr>
+                        <th>Rewards</th>
+                        <th>Pokémon</th>
+                        <th>Tera</th>
+                        <th>Seed</th>
+                        <th>Gender</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="results-body">
+                    <!-- Results will be populated here -->
+                </tbody>
+            </table>
+        </div>
     </div>
     <script src="js/seed-finder.js"></script>
 </body>
