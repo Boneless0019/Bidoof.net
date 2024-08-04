@@ -2,22 +2,22 @@ document.addEventListener("DOMContentLoaded", function() {
     const versionSelect = document.getElementById('version-select');
     const starSelect = document.getElementById('star-select');
     const mapSelect = document.getElementById('map-select');
-    const pokemonSelect = document.getElementById('pokemon-select');
-    const rewardSelect = document.getElementById('reward-select');
+    const pokemonFilterInput = document.getElementById('pokemon-filter');
+    const rewardFilterInput = document.getElementById('reward-filter');
     const resultsBody = document.getElementById('results-body');
     const prefixSelect = document.getElementById('prefix-select');
 
     versionSelect.addEventListener('change', displayStars);
     starSelect.addEventListener('change', displayMaps);
-    mapSelect.addEventListener('change', displayPokemonAndRewards);
-    pokemonSelect.addEventListener('change', displaySeeds);
-    rewardSelect.addEventListener('change', displaySeeds);
+    mapSelect.addEventListener('change', fetchSeeds);
+    pokemonFilterInput.addEventListener('input', displaySeeds);
+    rewardFilterInput.addEventListener('input', displaySeeds);
 
     function displayStars() {
         starSelect.innerHTML = '<option value="">Select Star Count</option>';
         mapSelect.innerHTML = '<option value="">Select Map</option>';
-        pokemonSelect.innerHTML = '<option value="">Select Pokémon</option>';
-        rewardSelect.innerHTML = '<option value="">Select Reward</option>';
+        pokemonFilterInput.value = '';
+        rewardFilterInput.value = '';
         resultsBody.innerHTML = '';
 
         const stars = ['1_star', '2_star', '3_star', '4_star', '5_star', '6_star'];
@@ -31,8 +31,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function displayMaps() {
         mapSelect.innerHTML = '<option value="">Select Map</option>';
-        pokemonSelect.innerHTML = '<option value="">Select Pokémon</option>';
-        rewardSelect.innerHTML = '<option value="">Select Reward</option>';
+        pokemonFilterInput.value = '';
+        rewardFilterInput.value = '';
         resultsBody.innerHTML = '';
 
         const maps = ['paldea', 'kitakami', 'blueberry'];
@@ -44,11 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    function displayPokemonAndRewards() {
-        pokemonSelect.innerHTML = '<option value="">Select Pokémon</option>';
-        rewardSelect.innerHTML = '<option value="">Select Reward</option>';
-        resultsBody.innerHTML = '';
-
+    function fetchSeeds() {
         const version = versionSelect.value;
         const star = starSelect.value;
         const map = mapSelect.value;
@@ -60,58 +56,27 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch(filePath)
             .then(response => response.json())
             .then(data => {
-                const species = [...new Set(data.seeds.map(seed => seed.species))];
-                const rewards = [...new Set(data.seeds.flatMap(seed => seed.rewards.map(reward => reward.name)))];
-                
-                species.forEach(pokemon => {
-                    const option = document.createElement('option');
-                    option.value = pokemon;
-                    option.textContent = pokemon;
-                    pokemonSelect.appendChild(option);
-                });
-
-                rewards.forEach(reward => {
-                    const option = document.createElement('option');
-                    option.value = reward;
-                    option.textContent = reward;
-                    rewardSelect.appendChild(option);
-                });
+                displaySeeds(data.seeds);
             })
             .catch(error => console.error('Error fetching the seeds:', error));
     }
 
-    function displaySeeds() {
+    function displaySeeds(seeds = []) {
         resultsBody.innerHTML = '';
 
-        const version = versionSelect.value;
-        const star = starSelect.value;
-        const map = mapSelect.value;
-        const species = pokemonSelect.value;
-        const reward = rewardSelect.value;
+        const pokemonFilter = pokemonFilterInput.value.toLowerCase();
+        const rewardFilter = rewardFilterInput.value.toLowerCase();
 
-        if (!version || !star || !map) return;
+        const filteredSeeds = seeds.filter(seed => {
+            const matchesPokemon = !pokemonFilter || seed.species.toLowerCase().includes(pokemonFilter);
+            const matchesReward = !rewardFilter || seed.rewards.some(reward => reward.name.toLowerCase().includes(rewardFilter));
+            return matchesPokemon && matchesReward;
+        });
 
-        const filePath = `data/${star}/${version}/${map}.json`;
-
-        fetch(filePath)
-            .then(response => response.json())
-            .then(data => {
-                let filteredSeeds = data.seeds;
-
-                if (species) {
-                    filteredSeeds = filteredSeeds.filter(seed => seed.species === species);
-                }
-
-                if (reward) {
-                    filteredSeeds = filteredSeeds.filter(seed => seed.rewards.some(r => r.name === reward));
-                }
-
-                showSeeds(filteredSeeds, data.meta.stars);
-            })
-            .catch(error => console.error('Error fetching the seeds:', error));
+        showSeeds(filteredSeeds);
     }
 
-    function showSeeds(seeds, stars) {
+    function showSeeds(seeds) {
         seeds.forEach(seed => {
             const row = document.createElement('tr');
 
@@ -140,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function() {
             copyButton.textContent = 'Copy';
             copyButton.onclick = () => {
                 const prefix = prefixSelect.value;
-                const raidCommand = `${prefix}ra ${seed.seed} ${stars} <storyprogress>`;
+                const raidCommand = `${prefix}ra ${seed.seed} ${seed.meta.stars} <storyprogress>`;
                 navigator.clipboard.writeText(raidCommand).then(() => {
                     alert(`Copied to clipboard: ${raidCommand}`);
                 }, (err) => {
