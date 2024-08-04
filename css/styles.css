@@ -3,9 +3,9 @@ body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    background: url('https://yourimagepath.com/pizza-background.jpg') no-repeat center center fixed;
+    background: url('https://yourimagepath.com/pizza-background.jpg') no-repeat center center fixed; /* Update with your pizza-themed background */
     background-size: cover;
-    color: #333;
+    color: #333; /* Dark grey for text */
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -13,7 +13,7 @@ body {
 
 /* Header styles for branding and navigation */
 header {
-    background: rgba(255, 99, 71, 0.9); /* Translucent red header */
+    background: #FF6347; /* Solid red header */
     padding: 20px 0;
     color: white;
     text-align: center;
@@ -22,8 +22,7 @@ header {
 
 header h1 {
     margin: 0;
-    font-size: 3rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-size: 2.5rem;
 }
 
 /* Main content container for better layering and readability */
@@ -39,7 +38,7 @@ main {
 .container {
     width: 85%;
     max-width: 1200px;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.9); /* White background for content */
     padding: 20px;
     border-radius: 10px;
     margin: 20px;
@@ -47,7 +46,7 @@ main {
     text-align: center;
 }
 
-.container h1, .container p {
+.container h2, .container p {
     margin-bottom: 20px;
 }
 
@@ -55,7 +54,7 @@ main {
 .btn {
     display: inline-block;
     padding: 15px 30px;
-    background-color: #FFD700;
+    background-color: #FFD700; /* Golden yellow for buttons */
     color: #333;
     text-decoration: none;
     border-radius: 50px;
@@ -74,7 +73,7 @@ main {
 footer {
     text-align: center;
     padding: 10px 0;
-    background-color: rgba(255, 99, 71, 0.9);
+    background-color: #FF6347; /* Solid red footer */
     color: white;
     width: 100%;
     position: fixed;
