@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const pokemonSelect = document.getElementById('pokemon-filter');
     const rewardSelect = document.getElementById('reward-filter');
     const resultsBody = document.getElementById('results-body');
-    const prefixSelect = document.getElementById('prefix-select');
 
     versionSelect.addEventListener('change', refreshData);
     starSelect.addEventListener('change', refreshData);
@@ -25,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const version = versionSelect.value;
         const star = starSelect.value;
         const map = mapSelect.value;
-        const filePath = `data/${star}/${version}/${map}.json`;
+        const filePath = `https://raw.githubusercontent.com/yourusername/yourrepository/main/data/${star}/${version}/${map}.json`;
 
         fetch(filePath)
             .then(response => response.json())
@@ -51,14 +50,20 @@ document.addEventListener("DOMContentLoaded", function() {
             seed.rewards.forEach(reward => rewardsSet.add(reward.name));
         });
 
-        pokemonSelect.innerHTML = '';
-        rewardSelect.innerHTML = '';
+        pokemonSelect.innerHTML = '<option value="">Filter Pokémon</option>';
+        rewardSelect.innerHTML = '<option value="">Filter Reward</option>';
 
         pokemonSet.forEach(pokemon => {
-            pokemonSelect.add(new Option(pokemon, pokemon));
+            const option = document.createElement('option');
+            option.value = pokemon;
+            option.textContent = pokemon;
+            pokemonSelect.appendChild(option);
         });
         rewardsSet.forEach(reward => {
-            rewardSelect.add(new Option(reward, reward));
+            const option = document.createElement('option');
+            option.value = reward;
+            option.textContent = reward;
+            rewardSelect.appendChild(option);
         });
 
         if (!pokemonSet.size) pokemonSelect.add(new Option('No Pokémon found', ''));
@@ -79,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function() {
         filteredSeeds.forEach(seed => {
             const row = document.createElement('tr');
             const rewardsList = seed.rewards.map(r => `${r.count}x ${r.name}`).join(', ');
-            
+
             row.innerHTML = `
                 <td>${rewardsList}</td>
                 <td>${seed.species}</td>
@@ -92,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    function copyToClipboard(text) {
+    window.copyToClipboard = function(text) {
         navigator.clipboard.writeText(text).then(() => {
             alert('Copied to clipboard: ' + text);
         }).catch(err => {
