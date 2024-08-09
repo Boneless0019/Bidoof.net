@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const version = versionSelect.value;
         const star = starSelect.value;
         const map = mapSelect.value;
-        const filePath = `https://raw.githubusercontent.com/yourusername/yourrepository/main/data/${star}/${version}/${map}.json`;
+        const filePath = `https://raw.githubusercontent.com/Boneless0019/Bidoof.net/data/${star}/${version}/${map}.json`;
 
         fetch(filePath)
             .then(response => response.json())
