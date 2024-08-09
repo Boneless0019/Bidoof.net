@@ -24,12 +24,17 @@ document.addEventListener("DOMContentLoaded", function() {
         const version = versionSelect.value;
         const star = starSelect.value;
         const map = mapSelect.value;
-        const filePath = `https://raw.githubusercontent.com/Boneless0019/Bidoof.net/data/${star}/${version}/${map}.json`;
+        const filePath = `https://raw.githubusercontent.com/Boneless0019/Bidoof.net/main/data/${star}/${version}/${map}.json`;
 
         fetch(filePath)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
-                seedsData = data.seeds;
+                seedsData = data.seeds || [];
                 populateDropdowns();
                 displaySeeds();
             })
@@ -50,8 +55,8 @@ document.addEventListener("DOMContentLoaded", function() {
             seed.rewards.forEach(reward => rewardsSet.add(reward.name));
         });
 
-        pokemonSelect.innerHTML = '<option value="">Filter Pokémon</option>';
-        rewardSelect.innerHTML = '<option value="">Filter Reward</option>';
+        pokemonSelect.innerHTML = '<option value="">All Pokémon</option>';
+        rewardSelect.innerHTML = '<option value="">All Rewards</option>';
 
         pokemonSet.forEach(pokemon => {
             const option = document.createElement('option');
@@ -65,9 +70,6 @@ document.addEventListener("DOMContentLoaded", function() {
             option.textContent = reward;
             rewardSelect.appendChild(option);
         });
-
-        if (!pokemonSet.size) pokemonSelect.add(new Option('No Pokémon found', ''));
-        if (!rewardsSet.size) rewardSelect.add(new Option('No rewards found', ''));
     }
 
     function displaySeeds() {
@@ -95,6 +97,10 @@ document.addEventListener("DOMContentLoaded", function() {
             `;
             resultsBody.appendChild(row);
         });
+
+        if (filteredSeeds.length === 0) {
+            resultsBody.innerHTML = `<tr><td colspan="6">No results found</td></tr>`;
+        }
     }
 
     window.copyToClipboard = function(text) {
