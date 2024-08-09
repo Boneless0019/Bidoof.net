@@ -1,30 +1,24 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const versionSelect = document.getElementById('version-select');
-    const starSelect = document.getElementById('star-select');
-    const mapSelect = document.getElementById('map-select');
-    const pokemonSelect = document.getElementById('pokemon-filter');
-    const rewardSelect = document.getElementById('reward-filter');
-    const resultsBody = document.getElementById('results-body');
-
-    versionSelect.addEventListener('change', refreshData);
-    starSelect.addEventListener('change', refreshData);
-    mapSelect.addEventListener('change', fetchSeeds);
-    pokemonSelect.addEventListener('change', displaySeeds);
-    rewardSelect.addEventListener('change', displaySeeds);
+    const gameSelect = document.getElementById('game');
+    const rewardSelect = document.getElementById('rewardFilter');
+    const pokemonSelect = document.getElementById('pokemonFilter');
+    const teraSelect = document.getElementById('teraFilter');
+    const genderSelect = document.getElementById('genderFilter');
+    const shinySelect = document.getElementById('shinyFilter');
+    const botPrefixSelect = document.getElementById('botPrefix');
+    const tableBody = document.getElementById('tableBody');
+    const loading = document.getElementById('loading');
 
     let seedsData = [];
+    let currentPage = 1;
+    const rowsPerPage = 10;
 
-    function refreshData() {
-        if(versionSelect.value && starSelect.value && mapSelect.value) {
-            fetchSeeds();
-        }
-    }
-
-    function fetchSeeds() {
-        const version = versionSelect.value;
-        const star = starSelect.value;
-        const map = mapSelect.value;
-        const filePath = `https://raw.githubusercontent.com/Boneless0019/Bidoof.net/main/data/${star}/${version}/${map}.json`;
+    function fetchJsonData() {
+        const game = gameSelect.value;
+        const baseUrl = 'https://raw.githubusercontent.com/Boneless0019/Bidoof.net/main/data/';
+        const filePath = `${baseUrl}${game.split('-')[0].toLowerCase()}/${game.split('-')[1] ? game.split('-')[1].toLowerCase() : game.toLowerCase()}.json`;
+        
+        loading.style.display = 'block';
 
         fetch(filePath)
             .then(response => {
@@ -36,54 +30,51 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(data => {
                 seedsData = data.seeds || [];
                 populateDropdowns();
-                displaySeeds();
+                displayRewards();
+                loading.style.display = 'none';
             })
             .catch(error => {
-                console.error('Error fetching the seeds:', error);
-                seedsData = [];
-                populateDropdowns();
-                displaySeeds();
+                console.error('Error fetching the JSON data:', error);
+                loading.style.display = 'none';
             });
     }
 
     function populateDropdowns() {
         const pokemonSet = new Set();
         const rewardsSet = new Set();
+        const teraSet = new Set();
 
         seedsData.forEach(seed => {
             pokemonSet.add(seed.species);
             seed.rewards.forEach(reward => rewardsSet.add(reward.name));
+            teraSet.add(seed.tera_type);
         });
 
-        pokemonSelect.innerHTML = '<option value="">All Pokémon</option>';
-        rewardSelect.innerHTML = '<option value="">All Rewards</option>';
-
-        pokemonSet.forEach(pokemon => {
-            const option = document.createElement('option');
-            option.value = pokemon;
-            option.textContent = pokemon;
-            pokemonSelect.appendChild(option);
-        });
-        rewardsSet.forEach(reward => {
-            const option = document.createElement('option');
-            option.value = reward;
-            option.textContent = reward;
-            rewardSelect.appendChild(option);
-        });
+        populateSelect(pokemonSelect, pokemonSet);
+        populateSelect(rewardSelect, rewardsSet);
+        populateSelect(teraSelect, teraSet);
     }
 
-    function displaySeeds() {
-        resultsBody.innerHTML = '';
-        const pokemonFilter = pokemonSelect.value;
-        const rewardFilter = rewardSelect.value;
-
-        const filteredSeeds = seedsData.filter(seed => {
-            const pokemonMatches = !pokemonFilter || seed.species === pokemonFilter;
-            const rewardMatches = !rewardFilter || seed.rewards.some(reward => reward.name === rewardFilter);
-            return pokemonMatches && rewardMatches;
+    function populateSelect(selectElement, dataSet) {
+        selectElement.innerHTML = '<option value="all">All</option>';
+        dataSet.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item;
+            option.textContent = item;
+            selectElement.appendChild(option);
         });
+        selectElement.disabled = false;
+    }
 
-        filteredSeeds.forEach(seed => {
+    function displayRewards() {
+        tableBody.innerHTML = '';
+        const filteredSeeds = filterSeeds();
+
+        const startIndex = (currentPage - 1) * rowsPerPage;
+        const endIndex = startIndex + rowsPerPage;
+        const seedsToShow = filteredSeeds.slice(startIndex, endIndex);
+
+        seedsToShow.forEach(seed => {
             const row = document.createElement('tr');
             const rewardsList = seed.rewards.map(r => `${r.count}x ${r.name}`).join(', ');
 
@@ -93,21 +84,82 @@ document.addEventListener("DOMContentLoaded", function() {
                 <td>${seed.tera_type}</td>
                 <td>${seed.seed}</td>
                 <td>${seed.gender}</td>
-                <td><button onclick="copyToClipboard('${seed.seed}')">Copy</button></td>
+                <td><button onclick="copyToClipboard('${botPrefixSelect.value} ${seed.seed}')">Copy</button></td>
             `;
-            resultsBody.appendChild(row);
+            tableBody.appendChild(row);
         });
 
         if (filteredSeeds.length === 0) {
-            resultsBody.innerHTML = `<tr><td colspan="6">No results found</td></tr>`;
+            tableBody.innerHTML = '<tr><td colspan="6">No results found</td></tr>';
         }
+
+        updatePagination(filteredSeeds.length);
     }
 
-    window.copyToClipboard = function(text) {
+    function filterSeeds() {
+        const rewardFilter = rewardSelect.value;
+        const pokemonFilter = pokemonSelect.value;
+        const teraFilter = teraSelect.value;
+        const genderFilter = genderSelect.value;
+        const shinyFilter = shinySelect.value;
+
+        return seedsData.filter(seed => {
+            const rewardMatches = rewardFilter === 'all' || seed.rewards.some(r => r.name === rewardFilter);
+            const pokemonMatches = pokemonFilter === 'all' || seed.species === pokemonFilter;
+            const teraMatches = teraFilter === 'all' || seed.tera_type === teraFilter;
+            const genderMatches = genderFilter === 'all' || seed.gender === genderFilter;
+            const shinyMatches = shinyFilter === 'all' || (shinyFilter === 'yes' && seed.shiny === 'Yes') || (shinyFilter === 'no' && seed.shiny !== 'Yes');
+
+            return rewardMatches && pokemonMatches && teraMatches && genderMatches && shinyMatches;
+        });
+    }
+
+    function copyToClipboard(text) {
         navigator.clipboard.writeText(text).then(() => {
             alert('Copied to clipboard: ' + text);
         }).catch(err => {
             console.error('Error in copying text: ', err);
         });
     }
+
+    function resetFilters() {
+        gameSelect.selectedIndex = 0;
+        rewardSelect.selectedIndex = 0;
+        pokemonSelect.selectedIndex = 0;
+        teraSelect.selectedIndex = 0;
+        genderSelect.selectedIndex = 0;
+        shinySelect.selectedIndex = 0;
+        botPrefixSelect.selectedIndex = 0;
+        displayRewards();
+    }
+
+    function updatePagination(totalItems) {
+        const totalPages = Math.ceil(totalItems / rowsPerPage);
+        const pageInfo = document.getElementById('pageInfo');
+        const prevPageButton = document.getElementById('prevPage');
+        const nextPageButton = document.getElementById('nextPage');
+
+        pageInfo.textContent = `${currentPage} / ${totalPages}`;
+        prevPageButton.disabled = currentPage === 1;
+        nextPageButton.disabled = currentPage === totalPages;
+    }
+
+    function prevPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            displayRewards();
+        }
+    }
+
+    function nextPage() {
+        const totalItems = filterSeeds().length;
+        const totalPages = Math.ceil(totalItems / rowsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            displayRewards();
+        }
+    }
+
+    // Initialize the page
+    fetchJsonData();
 });
