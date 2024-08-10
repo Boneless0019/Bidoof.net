@@ -5,7 +5,63 @@ document.addEventListener("DOMContentLoaded", function() {
     const shinyStatusSelect = document.getElementById('shinyStatus');
     const tableBody = document.getElementById('tableBody');
 
+    let db;
     let seedsData = []; // Placeholder for fetched data
+
+    // Open or create the IndexedDB
+    const request = indexedDB.open("BonelessPizzaPlanetDB", 1);
+
+    request.onerror = function(event) {
+        console.error("IndexedDB error:", event.target.errorCode);
+    };
+
+    request.onsuccess = function(event) {
+        db = event.target.result;
+    };
+
+    request.onupgradeneeded = function(event) {
+        db = event.target.result;
+        if (!db.objectStoreNames.contains("seeds")) {
+            db.createObjectStore("seeds", { keyPath: "id", autoIncrement: true });
+        }
+    };
+
+    function storeDataInIndexedDB(data, key) {
+        const transaction = db.transaction(["seeds"], "readwrite");
+        const objectStore = transaction.objectStore("seeds");
+
+        const dataToStore = {
+            key: key,
+            data: data,
+            timestamp: new Date().getTime()
+        };
+
+        objectStore.add(dataToStore);
+
+        transaction.oncomplete = function() {
+            console.log("Data stored in IndexedDB successfully.");
+        };
+
+        transaction.onerror = function(event) {
+            console.error("Error storing data in IndexedDB:", event.target.errorCode);
+        };
+    }
+
+    function fetchDataFromIndexedDB(key, callback) {
+        const transaction = db.transaction(["seeds"]);
+        const objectStore = transaction.objectStore("seeds");
+        const index = objectStore.index('key');
+        const request = index.get(key);
+
+        request.onsuccess = function(event) {
+            callback(event.target.result ? event.target.result.data : null);
+        };
+
+        request.onerror = function(event) {
+            console.error("Error fetching data from IndexedDB:", event.target.errorCode);
+            callback(null);
+        };
+    }
 
     function filterByStarCount() {
         if (starCountSelect.value) {
@@ -27,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function filterByMap() {
         if (mapSelect.value) {
             shinyStatusSelect.disabled = false;
-            fetchAndDisplayData();
+            fetchAndDisplayData(); // Fetch data based on the selected filters
         } else {
             shinyStatusSelect.disabled = true;
         }
@@ -44,15 +100,27 @@ document.addEventListener("DOMContentLoaded", function() {
         const gameVersion = gameVersionSelect.value.toLowerCase();
         const map = mapSelect.value;
 
+        const key = `${starCount}_${gameVersion}_${map}`;
         const filePath = `https://raw.githubusercontent.com/Boneless0019/Bidoof.net/main/data/${starCount}/${gameVersion}/${map}.json`;
 
-        fetch(filePath)
-            .then(response => response.json())
-            .then(data => {
-                seedsData = data.seeds || [];
+        fetchDataFromIndexedDB(key, function(cachedData) {
+            if (cachedData) {
+                seedsData = cachedData;
                 displayFilteredData();
-            })
-            .catch(error => console.error('Error fetching data:', error));
+            } else {
+                fetch(filePath)
+                    .then(response => response.json())
+                    .then(data => {
+                        seedsData = data.seeds || [];
+                        storeDataInIndexedDB(seedsData, key);
+                        displayFilteredData();
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                        tableBody.innerHTML = '<tr><td colspan="6">Error fetching data</td></tr>';
+                    });
+            }
+        });
     }
 
     function displayFilteredData() {
@@ -62,6 +130,11 @@ document.addEventListener("DOMContentLoaded", function() {
         const filteredData = seedsData.filter(seed => {
             return shinyStatus === "" || seed.shiny === (shinyStatus === "yes" ? "Yes" : "No");
         });
+
+        if (filteredData.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="6">No results found</td></tr>';
+            return;
+        }
 
         filteredData.forEach(seed => {
             const row = document.createElement('tr');
