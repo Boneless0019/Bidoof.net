@@ -1,181 +1,227 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <title>Boneless Pizza Planet - Seed Finder</title>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1" name="viewport"/>
-    <!-- External Libraries -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet"/>
-    <!-- Custom Styles -->
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f8f9fa;
-            margin-bottom: 50px; /* Ensure space for footer */
-        }
-        .header {
-            background-color: #FF6347;
-            padding: 20px;
-            text-align: center;
-            color: white;
-        }
-        .header img {
-            max-width: 200px;
-        }
-        .navbar-custom {
-            background-color: #444;
-        }
-        .navbar-custom .nav-link {
-            color: white;
-        }
-        .dropdown-wrapper {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            margin-bottom: 20px;
-        }
-        .dropdown-container {
-            margin: 10px;
-            flex: 1;
-            min-width: 200px;
-        }
-        select, button {
-            background-color: #6757D6;
-            color: white;
-            border: 1px solid #444;
-            padding: 8px;
-            width: 100%;
-            border-radius: 5px;
-        }
-        select:focus, button:focus {
-            outline: none;
-            border-color: #777;
-        }
-        .table-hover tbody tr:hover {
-            background-color: #f1f1f1;
-        }
-        footer {
-            background-color: #444;
-            color: white;
-            text-align: center;
-            padding: 10px;
-            position: fixed;
-            width: 100%;
-            bottom: 0;
-        }
-        footer a {
-            color: #aaa;
-        }
-    </style>
-</head>
-<body>
-
-    <!-- Header -->
-    <div class="header">
-        <a href="index.html">
-            <img src="https://genpkm.com/images/logo.png" alt="Boneless Pizza Planet - Seed Finder">
-        </a>
-    </div>
-
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-custom">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Shiny Raids</a></li>
-                <li class="nav-item active"><a class="nav-link" href="#">Seed Finder</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Pokedex</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- Main Container -->
-    <div class="container">
-        <!-- Dropdown Filters -->
-        <div class="dropdown-wrapper">
-            <div class="dropdown-container">
-                <label for="starCount">Star Count:</label>
-                <select id="starCount" onchange="filterByStarCount()">
-                    <option value="">Select Star Count</option>
-                    <option value="1_star">1 Star</option>
-                    <option value="2_star">2 Star</option>
-                    <option value="3_star">3 Star</option>
-                    <option value="4_star">4 Star</option>
-                    <option value="5_star">5 Star</option>
-                    <option value="6_star">6 Star</option>
-                </select>
-            </div>
-            <div class="dropdown-container">
-                <label for="gameVersion">Game Version:</label>
-                <select id="gameVersion" onchange="filterByGameVersion()" disabled>
-                    <option value="">Select Game Version</option>
-                    <option value="Scarlet">Pokémon Scarlet</option>
-                    <option value="Violet">Pokémon Violet</option>
-                </select>
-            </div>
-            <div class="dropdown-container">
-                <label for="mapSelection">Map:</label>
-                <select id="mapSelection" onchange="filterByMap()" disabled>
-                    <option value="">Select Map</option>
-                    <option value="paldea">Paldea</option>
-                    <option value="kitakami">Kitakami</option>
-                    <option value="blueberry">Blueberry</option>
-                </select>
-            </div>
-            <div class="dropdown-container">
-                <label for="shinyStatus">Shiny Status:</label>
-                <select id="shinyStatus" onchange="filterByShinyStatus()" disabled>
-                    <option value="">Select Shiny Status</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                </select>
-            </div>
+    <head>
+        <title>Boneless Pizza Planet - Seed Finder</title>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <!-- External Libraries -->
+        <link
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+            rel="stylesheet"
+        />
+        <!-- Custom Styles -->
+        <style>
+            body {
+                font-family: "Roboto", sans-serif;
+                background-color: #f8f9fa;
+                margin-bottom: 50px; /* Ensure space for footer */
+            }
+            .header {
+                background-color: #ff6347;
+                padding: 20px;
+                text-align: center;
+                color: white;
+            }
+            .header img {
+                max-width: 200px;
+            }
+            .navbar-custom {
+                background-color: #444;
+            }
+            .navbar-custom .nav-link {
+                color: white;
+            }
+            .dropdown-wrapper {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-around;
+                margin-bottom: 20px;
+            }
+            .dropdown-container {
+                margin: 10px;
+                flex: 1;
+                min-width: 200px;
+            }
+            select,
+            button {
+                background-color: #6757d6;
+                color: white;
+                border: 1px solid #444;
+                padding: 8px;
+                width: 100%;
+                border-radius: 5px;
+            }
+            select:focus,
+            button:focus {
+                outline: none;
+                border-color: #777;
+            }
+            .table-hover tbody tr:hover {
+                background-color: #f1f1f1;
+            }
+            footer {
+                background-color: #444;
+                color: white;
+                text-align: center;
+                padding: 10px;
+                position: fixed;
+                width: 100%;
+                bottom: 0;
+            }
+            footer a {
+                color: #aaa;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Header -->
+        <div class="header">
+            <a href="index.html">
+                <img
+                    src="https://genpkm.com/images/logo.png"
+                    alt="Boneless Pizza Planet - Seed Finder"
+                />
+            </a>
         </div>
 
-        <!-- Reset Filters Button -->
-        <button id="resetFilters" onclick="resetFilters()">Reset Filters</button>
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-custom">
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-toggle="collapse"
+                data-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Shiny Raids</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Seed Finder</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Pokedex</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
 
-        <!-- Rewards Table -->
-        <div id="table-container">
-            <table class="table table-hover table-striped" id="rewardsTable">
-                <thead>
-                    <tr>
-                        <th>Rewards</th>
-                        <th>Pokémon</th>
-                        <th>Tera</th>
-                        <th>Seed</th>
-                        <th>Gender</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <!-- Table rows will be dynamically inserted here -->
-                </tbody>
-            </table>
+        <!-- Main Container -->
+        <div class="container">
+            <!-- Dropdown Filters -->
+            <div class="dropdown-wrapper">
+                <div class="dropdown-container">
+                    <label for="starCount">Star Count:</label>
+                    <select id="starCount" onchange="filterByStarCount()">
+                        <option value="">Select Star Count</option>
+                        <option value="1_star">1 Star</option>
+                        <option value="2_star">2 Star</option>
+                        <option value="3_star">3 Star</option>
+                        <option value="4_star">4 Star</option>
+                        <option value="5_star">5 Star</option>
+                        <option value="6_star">6 Star</option>
+                    </select>
+                </div>
+                <div class="dropdown-container">
+                    <label for="gameVersion">Game Version:</label>
+                    <select
+                        id="gameVersion"
+                        onchange="filterByGameVersion()"
+                        disabled
+                    >
+                        <option value="">Select Game Version</option>
+                        <option value="Scarlet">Pokémon Scarlet</option>
+                        <option value="Violet">Pokémon Violet</option>
+                    </select>
+                </div>
+                <div class="dropdown-container">
+                    <label for="mapSelection">Map:</label>
+                    <select id="mapSelection" onchange="filterByMap()" disabled>
+                        <option value="">Select Map</option>
+                        <option value="paldea">Paldea</option>
+                        <option value="kitakami">Kitakami</option>
+                        <option value="blueberry">Blueberry</option>
+                    </select>
+                </div>
+                <div class="dropdown-container">
+                    <label for="shinyStatus">Shiny Status:</label>
+                    <select
+                        id="shinyStatus"
+                        onchange="filterByShinyStatus()"
+                        disabled
+                    >
+                        <option value="">Select Shiny Status</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Reset Filters Button -->
+            <button id="resetFilters" onclick="resetFilters()">
+                Reset Filters
+            </button>
+
+            <!-- Rewards Table -->
+            <div id="table-container">
+                <table
+                    class="table table-hover table-striped"
+                    id="rewardsTable"
+                >
+                    <thead>
+                        <tr>
+                            <th>Rewards</th>
+                            <th>Pokémon</th>
+                            <th>Tera</th>
+                            <th>Seed</th>
+                            <th>Gender</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Table rows will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination">
+                <button disabled id="prevPage">Prev</button>
+                <span id="pageInfo">1 / 1</span>
+                <button disabled id="nextPage">Next</button>
+            </div>
         </div>
 
-        <!-- Pagination -->
-        <div id="pagination">
-            <button disabled id="prevPage">Prev</button>
-            <span id="pageInfo">1 / 1</span>
-            <button disabled id="nextPage">Next</button>
-        </div>
-    </div>
+        <!-- Footer -->
+        <footer>
+            © 2024 Boneless Pizza Planet
+            <a href="https://discord.gg/hhqBHZf8Yg" target="_blank"
+                ><i class="fab fa-discord"></i
+            ></a>
+            <a href="https://ko-fi.com/gengar1989" target="_blank"
+                ><img
+                    src="https://genpkm.com/Eri/Donate.png"
+                    alt="Donate through Ko-fi"
+                    width="100"
+            /></a>
+        </footer>
 
-    <!-- Footer -->
-    <footer>
-        © 2024 Boneless Pizza Planet
-        <a href="https://discord.gg/hhqBHZf8Yg" target="_blank"><i class="fab fa-discord"></i></a>
-        <a href="https://ko-fi.com/gengar1989" target="_blank"><img src="https://genpkm.com/Eri/Donate.png" alt="Donate through Ko-fi" width="100"/></a>
-    </footer>
-
-    <!-- JavaScript Links -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-    <script src="seed-finder.js"></script>
-</body>
+        <!-- JavaScript Links -->
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+        <script src="seed-finder.js"></script>
+    </body>
 </html>

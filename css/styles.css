@@ -1,9 +1,10 @@
 /* General body styles */
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: "Arial", sans-serif;
     margin: 0;
     padding: 0;
-    background: url('https://yourimagepath.com/pizza-background.jpg') no-repeat center center fixed; /* Update with your pizza-themed background */
+    background: url("https://yourimagepath.com/pizza-background.jpg") no-repeat
+        center center fixed; /* Update with your pizza-themed background */
     background-size: cover;
     color: #333; /* Dark grey for text */
     display: flex;
@@ -13,7 +14,7 @@ body {
 
 /* Header styles for branding and navigation */
 header {
-    background: #FF6347; /* Solid red header */
+    background: #ff6347; /* Solid red header */
     padding: 20px 0;
     color: white;
     text-align: center;
@@ -46,7 +47,8 @@ main {
     text-align: center;
 }
 
-.container h2, .container p {
+.container h2,
+.container p {
     margin-bottom: 20px;
 }
 
@@ -54,18 +56,20 @@ main {
 .btn {
     display: inline-block;
     padding: 15px 30px;
-    background-color: #FFD700; /* Golden yellow for buttons */
+    background-color: #ffd700; /* Golden yellow for buttons */
     color: #333;
     text-decoration: none;
     border-radius: 50px;
     font-size: 1.2rem;
     font-weight: bold;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    transition:
+        background-color 0.3s ease,
+        transform 0.3s ease;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .btn:hover {
-    background-color: #FFA500;
+    background-color: #ffa500;
     transform: translateY(-2px);
 }
 
@@ -73,7 +77,7 @@ main {
 footer {
     text-align: center;
     padding: 10px 0;
-    background-color: #FF6347; /* Solid red footer */
+    background-color: #ff6347; /* Solid red footer */
     color: white;
     width: 100%;
     position: fixed;
@@ -118,30 +122,33 @@ table {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-th, td {
+th,
+td {
     text-align: left;
     padding: 15px;
     border-bottom: 1px solid #ddd;
 }
 
 th {
-    background-color: #FF6347;
+    background-color: #ff6347;
     color: white;
 }
 
 td button {
-    background-color: #FFD700;
+    background-color: #ffd700;
     color: white;
     border: none;
     padding: 8px 12px;
     border-radius: 5px;
     cursor: pointer;
     margin-top: 10px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    transition:
+        background-color 0.3s ease,
+        transform 0.3s ease;
 }
 
 td button:hover {
-    background-color: #FFA500;
+    background-color: #ffa500;
     transform: translateY(-2px);
 }
 
@@ -152,7 +159,8 @@ td button:hover {
         padding: 10px;
     }
 
-    header h1, footer p {
+    header h1,
+    footer p {
         font-size: 1.5rem;
     }
 }
