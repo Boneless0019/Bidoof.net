@@ -3,7 +3,7 @@ body {
     font-family: "Arial", sans-serif;
     margin: 0;
     padding: 0;
-    background: url("https://yourimagepath.com/pizza-background.jpg") no-repeat
+    background: url("https://raw.githubusercontent.com/Boneless0019/Bidoof.net/main/images/welcome.jpg") no-repeat
         center center fixed; /* Update with your pizza-themed background */
     background-size: cover;
     color: #333; /* Dark grey for text */
